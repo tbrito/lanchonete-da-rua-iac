@@ -93,7 +93,7 @@ resource "aws_db_subnet_group" "lanchonetedarua2" {
   }
 }
 
-resource "aws_security_group" "rds" {
+resource "aws_security_group" "rds2" {
   name   = "lanchonetedarua2_rds"
   vpc_id = module.vpc.vpc_id
 
@@ -126,7 +126,7 @@ resource "aws_db_instance" "lanchonetedarua2" {
   username               = "postgres"
   password               = var.db_password
   db_subnet_group_name   = aws_db_subnet_group.lanchonetedarua2.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
+  vpc_security_group_ids = [aws_security_group.rds2.id]
   parameter_group_name   = aws_db_parameter_group.lanchonetedarua2.name
   publicly_accessible    = true
   skip_final_snapshot    = true
