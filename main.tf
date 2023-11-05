@@ -68,7 +68,7 @@ resource "aws_api_gateway_stage" "lanchonetedarua" {
   stage_name    = "lanchonetedarua"
 }
 
-## vpc
+## VPC
 
 data "aws_availability_zones" "available" {}
 
@@ -93,7 +93,30 @@ resource "aws_db_subnet_group" "lanchonetedarua" {
   }
 }
 
-#Instancia do banco
+resource "aws_security_group" "rds" {
+  name   = "lanchonetedarua_rds"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "lanchonetedarua_rds"
+  }
+}
+
+# Instancia do banco
 resource "aws_db_instance" "lanchonetedarua" {
   identifier             = "lanchonetedarua"
   instance_class         = "db.t3.micro"
