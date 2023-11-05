@@ -122,7 +122,7 @@ resource "aws_db_instance" "lanchonetedarua" {
   instance_class         = "db.t3.micro"
   allocated_storage      = 5
   engine                 = "postgres"
-  engine_version         = "13"
+  engine_version         = "14"
   username               = "postgres"
   password               = var.db_password
   db_subnet_group_name   = aws_db_subnet_group.lanchonetedarua.name
@@ -134,7 +134,7 @@ resource "aws_db_instance" "lanchonetedarua" {
 
 resource "aws_db_parameter_group" "lanchonetedarua" {
   name   = "lanchonetedarua"
-  family = "postgres13"
+  family = "postgres14"
 
   parameter {
     name  = "log_connections"
