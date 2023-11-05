@@ -20,6 +20,8 @@ provider "aws" {
   region = "us-east-1"
 }
 
+### GATEWAY
+
 resource "aws_api_gateway_rest_api" "lanchonetedarua" {
   body = jsonencode({
     openapi = "3.0.1"
@@ -28,7 +30,7 @@ resource "aws_api_gateway_rest_api" "lanchonetedarua" {
       version = "1.0"
     }
     paths = {
-      "/path1" = {
+      "/path2" = {
         get = {
           x-amazon-apigateway-integration = {
             httpMethod           = "GET"
@@ -64,4 +66,40 @@ resource "aws_api_gateway_stage" "lanchonetedarua" {
   deployment_id = aws_api_gateway_deployment.lanchonetedarua.id
   rest_api_id   = aws_api_gateway_rest_api.lanchonetedarua.id
   stage_name    = "lanchonetedarua"
+}
+
+##DATABASE
+
+data "aws_vpc" "default" {
+  default = true
+}
+resource "random_string" "uddin-db-password" {
+  length  = 32
+  upper   = true
+  number  = true
+  special = false
+}
+resource "aws_security_group" "uddin" {
+  vpc_id      = "${data.aws_vpc.default.id}"
+  name        = "uddin"
+  description = "Allow all inbound for Postgres"
+ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+resource "aws_db_instance" "uddin-sameed" {
+  identifier             = "uddin-sameed"
+  name                   = "uddin"
+  instance_class         = "db.t2.micro"
+  allocated_storage      = 5
+  engine                 = "postgres"
+  engine_version         = "12.5"
+  skip_final_snapshot    = true
+  publicly_accessible    = true
+  vpc_security_group_ids = [aws_security_group.uddin.id]
+  username               = "sameed"
+  password               = "random_string.uddin-db-password.result}"
 }
