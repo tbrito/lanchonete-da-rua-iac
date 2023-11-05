@@ -69,6 +69,9 @@ resource "aws_api_gateway_stage" "lanchonetedarua" {
 }
 
 ## vpc
+
+data "aws_availability_zones" "available" {}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.77.0"
