@@ -134,7 +134,7 @@ resource "aws_db_instance" "lanchonetedarua" {
 
 resource "aws_db_parameter_group" "lanchonetedarua" {
   name   = "lanchonetedarua"
-  family = "postgres14"
+  family = "postgres13"
 
   parameter {
     name  = "log_connections"
