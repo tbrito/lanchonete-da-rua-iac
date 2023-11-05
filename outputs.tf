@@ -1,17 +1,17 @@
-output "rds_hostname" {
+output "rds2_hostname" {
   description = "RDS instance hostname"
-  value       = aws_db_instance.lanchonetedarua.address
+  value       = aws_db_instance.lanchonetedarua2.address
   sensitive   = true
 }
 
-output "rds_port" {
+output "rds2_port" {
   description = "RDS instance port"
-  value       = aws_db_instance.lanchonetedarua.port
+  value       = aws_db_instance.lanchonetedarua2.port
   sensitive   = true
 }
 
-output "rds_username" {
+output "rds2_username" {
   description = "RDS instance root username"
-  value       = aws_db_instance.lanchonetedarua.username
+  value       = aws_db_instance.lanchonetedarua2.username
   sensitive   = true
 }
