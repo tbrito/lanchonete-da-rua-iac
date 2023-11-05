@@ -18,6 +18,8 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
+  access_key = "AKIA6NEWESPLASWMJAGH"
+  secret_key = "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"
 }
 
 resource "aws_api_gateway_rest_api" "lanchonetedarua" {
