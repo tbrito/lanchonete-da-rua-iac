@@ -175,8 +175,8 @@ resource "aws_security_group" "rds2" {
 ####
 
 # Instancia do banco
-resource "aws_db_instance" "lanchonetedarua2" {
-  identifier             = "lanchonetedarua2"
+resource "aws_db_instance" "lanchonetedarua3" {
+  identifier             = "lanchonetedarua3"
   instance_class         = "db.t3.micro"
   allocated_storage      = 5
   engine                 = "postgres"
@@ -190,8 +190,8 @@ resource "aws_db_instance" "lanchonetedarua2" {
   skip_final_snapshot    = true
 }
 
-resource "aws_db_parameter_group" "lanchonetedarua2" {
-  name   = "lanchonetedarua2"
+resource "aws_db_parameter_group" "lanchonetedarua3" {
+  name   = "lanchonetedarua3"
   family = "postgres15"
 
   parameter {
