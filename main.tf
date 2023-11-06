@@ -216,7 +216,7 @@ resource "aws_lb_target_group" "target_group" {
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = "${aws_vpc.main.id}" # default VPC
+  vpc_id      = "${module.vpc.vpc_id}" # default VPC
 }
 
 resource "aws_lb_listener" "listener" {
