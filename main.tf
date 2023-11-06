@@ -197,9 +197,9 @@ resource "aws_ecr_repository" "lanchonetedarua_ecr_repo" {
 }
 
 # ###ECS
-# resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
-#   name = "lanchonetedarua-cluster" 
-# }
+resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
+  name = "lanchonetedarua-cluster" 
+}
 
 # resource "aws_ecs_task_definition" "app_task" {
 #   family                   = "app-first-task" # Name your task
