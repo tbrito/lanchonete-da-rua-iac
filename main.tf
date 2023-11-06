@@ -183,8 +183,8 @@ resource "aws_db_instance" "lanchonetedarua3" {
   engine_version         = "15.3"
   username               = "postgres"
   password               = var.db_password
-  db_subnet_group_name   = aws_db_subnet_group.default_subnet_a.id
-  vpc_security_group_ids = [aws_security_group.service_security_group.id]
+  db_subnet_group_name   = [aws_db_subnet_group.lanchonetedarua3.name]
+  vpc_security_group_ids = [aws_security_group.lanchonetedarua3.id]
   parameter_group_name   = aws_db_parameter_group.lanchonetedarua3.name
   publicly_accessible    = true
   skip_final_snapshot    = true
