@@ -11,7 +11,7 @@ terraform {
     organization = "lanchonetedarua"
 
     workspaces {
-      name = "lanchonete-cognito-iac"
+      name = "lanchonete-da-rua-iac"
     }
   }
 }
