@@ -20,7 +20,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-### GATEWAY
+### GATEWAYs
 
 # resource "aws_api_gateway_rest_api" "lanchonetedarua" {
 #   body = jsonencode({
