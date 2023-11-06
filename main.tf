@@ -203,10 +203,7 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 resource "aws_alb" "application_load_balancer" {
   name               = "load-balancer-dev" #load balancer name
   load_balancer_type = "application"
-  subnets = [ # Referencing the default subnets
-    "${aws_db_subnet_group.lanchonetedarua2.id}"
-  ]
-  # security group
+  subnets = [ "${aws_db_subnet_group.lanchonetedarua2.id}" ]
   security_groups = ["${aws_security_group.rds2.id}"]
 }
 
@@ -247,24 +244,6 @@ resource "aws_ecs_service" "app_service" {
     subnets          = ["${aws_db_subnet_group.lanchonetedarua2.id}"]
     assign_public_ip = true     # Provide the containers with public IPs
     security_groups  = ["${aws_security_group.rds2.id}"] # Set up the security group
-  }
-}
-
-#Create security groups
-resource "aws_security_group" "service_security_group" {
-  ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
-    security_groups = ["${aws_security_group.rds2.id}"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
