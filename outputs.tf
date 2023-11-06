@@ -15,8 +15,3 @@ output "rds2_username" {
   value       = aws_db_instance.lanchonetedarua2.username
   sensitive   = true
 }
-
-output "vpc_id" {
-  description = "The ID of the VPC"
-  value       = "${module.vpc.vpc_id}"
-}
