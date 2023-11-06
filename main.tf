@@ -141,12 +141,12 @@ module "vpc" {
   enable_dns_support   = true
 }
 
-resource "aws_db_subnet_group" "lanchonetedarua2" {
-  name       = "lanchonetedarua2"
+resource "aws_db_subnet_group" "lanchonetedarua3" {
+  name       = "lanchonetedarua3"
   subnet_ids = module.vpc.public_subnets
 
   tags = {
-    Name = "VPCsLanchonete2"
+    Name = "VPCsLanchonete3"
   }
 }
 
@@ -183,9 +183,9 @@ resource "aws_db_instance" "lanchonetedarua3" {
   engine_version         = "15.3"
   username               = "postgres"
   password               = var.db_password
-  db_subnet_group_name   = aws_db_subnet_group.lanchonetedarua2.name
+  db_subnet_group_name   = aws_db_subnet_group.lanchonetedarua3.name
   vpc_security_group_ids = [aws_security_group.service_security_group.id]
-  parameter_group_name   = aws_db_parameter_group.lanchonetedarua2.name
+  parameter_group_name   = aws_db_parameter_group.lanchonetedarua3.name
   publicly_accessible    = true
   skip_final_snapshot    = true
 }
