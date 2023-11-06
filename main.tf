@@ -117,7 +117,7 @@ resource "aws_security_group" "service_security_group" {
   }
 }
 
-### VPC-OLD
+### VPC
 data "aws_availability_zones" "available" {}
 
 module "vpc" {
@@ -163,7 +163,7 @@ resource "aws_security_group" "rds2" {
     Name = "lanchonetedarua2_rds"
   }
 }
-####
+
 
 # Instancia do banco
 resource "aws_db_instance" "lanchonetedarua3" {
