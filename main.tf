@@ -193,7 +193,7 @@ resource "aws_db_parameter_group" "lanchonetedarua3" {
 
 # ## ECR
 resource "aws_ecr_repository" "lanchonetedarua_ecr_repo" {
-  name = "app-repo"
+  name = "lanchonete-da-rua"
 }
 
 # ###ECS
