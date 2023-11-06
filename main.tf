@@ -203,7 +203,7 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 resource "aws_alb" "application_load_balancer" {
   name               = "load-balancer-dev" #load balancer name
   load_balancer_type = "application"
-  subnets = [ for subnet in module.vpc.public_subnets : subnets ]
+  subnets = [ for subnet in module.vpc.public_subnets : subnet ]
   security_groups = ["${aws_security_group.rds2.id}"]
 }
 
