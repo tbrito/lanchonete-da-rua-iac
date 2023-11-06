@@ -117,15 +117,6 @@ resource "aws_security_group" "service_security_group" {
   }
 }
 
-# resource "aws_db_subnet_group" "lanchonetedarua2" {
-#   name       = "lanchonetedarua2"
-#   subnet_ids = [aws_default_subnet.default_subnet_a.id, aws_default_subnet.default_subnet_b.id]
-
-#   tags = {
-#     Name = "lanchonetedarua2 db sub"
-#   }
-# }
-
 ### VPC-OLD
 data "aws_availability_zones" "available" {}
 
@@ -201,9 +192,9 @@ resource "aws_db_parameter_group" "lanchonetedarua3" {
 }
 
 # ## ECR
-# resource "aws_ecr_repository" "lanchonetedarua_ecr_repo" {
-#   name = "app-repo"
-# }
+resource "aws_ecr_repository" "lanchonetedarua_ecr_repo" {
+  name = "app-repo"
+}
 
 # ###ECS
 # resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
