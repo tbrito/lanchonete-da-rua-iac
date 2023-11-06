@@ -69,50 +69,60 @@ resource "aws_api_gateway_stage" "lanchonetedarua" {
 }
 
 ## VPC
+# Provide a reference to your default VPC
+resource "aws_default_vpc" "default_vpc" {
+}
 
-data "aws_availability_zones" "available" {}
+# Provide references to your default subnets
+resource "aws_default_subnet" "default_subnet_a" {
+  # Use your own region here but reference to subnet 1a
+  availability_zone = "us-east-1a"
+}
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "2.77.0"
+resource "aws_default_subnet" "default_subnet_b" {
+  # Use your own region here but reference to subnet 1b
+  availability_zone = "us-east-1b"
+}
 
-  name                 = "lanchonetedarua2"
-  cidr                 = "10.0.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+resource "aws_security_group" "load_balancer_security_group" {
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Allow traffic in from all sources
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "service_security_group" {
+  ingress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+    # Only allowing traffic in from the load balancer security group
+    security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_db_subnet_group" "lanchonetedarua2" {
   name       = "lanchonetedarua2"
-  subnet_ids = module.vpc.public_subnets
+  subnet_ids = [aws_default_subnet.default_subnet_a.id, aws_default_subnet.default_subnet_b.id]
 
   tags = {
-    Name = "VPCsLanchonete2"
-  }
-}
-
-resource "aws_security_group" "rds2" {
-  name   = "lanchonetedarua2_rds"
-  vpc_id = module.vpc.vpc_id
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "lanchonetedarua2_rds"
+    Name = "lanchonetedarua2 db sub"
   }
 }
 
@@ -126,7 +136,7 @@ resource "aws_db_instance" "lanchonetedarua2" {
   username               = "postgres"
   password               = var.db_password
   db_subnet_group_name   = aws_db_subnet_group.lanchonetedarua2.name
-  vpc_security_group_ids = [aws_security_group.rds2.id]
+  vpc_security_group_ids = [aws_security_group.service_security_group.id]
   parameter_group_name   = aws_db_parameter_group.lanchonetedarua2.name
   publicly_accessible    = true
   skip_final_snapshot    = true
@@ -203,17 +213,21 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 resource "aws_alb" "application_load_balancer" {
   name               = "load-balancer-dev" #load balancer name
   load_balancer_type = "application"
-  subnets = [ for subnet in module.vpc.public_subnets : subnet ]
-  security_groups = ["${aws_security_group.rds2.id}"]
+  subnets = [ # Referencing the default subnets
+    "${aws_default_subnet.default_subnet_a.id}",
+    "${aws_default_subnet.default_subnet_b.id}"
+  ]
+  # security group
+  security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
 }
 
-#????
+#aws_lb_target_group
 resource "aws_lb_target_group" "target_group" {
   name        = "target-group"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = "${module.vpc.vpc_id}" # default VPC
+  vpc_id      = "${aws_default_vpc.default_vpc.id}" # default VPC
 }
 
 resource "aws_lb_listener" "listener" {
@@ -241,9 +255,9 @@ resource "aws_ecs_service" "app_service" {
   }
 
   network_configuration {
-    subnets          = ["${aws_db_subnet_group.lanchonetedarua2.id}"]
+    subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
     assign_public_ip = true     # Provide the containers with public IPs
-    security_groups  = ["${aws_security_group.rds2.id}"] # Set up the security group
+    security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
   }
 }
 
