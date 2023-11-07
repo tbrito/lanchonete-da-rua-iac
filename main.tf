@@ -348,6 +348,7 @@ EOF
 }
 
 resource "aws_lambda_permission" "url" {
+  statement_id  = "AllowMyroleAuthentication"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.generate_token_function.lanchonete_generate_token
   principal     = "events.amazonaws.com"
