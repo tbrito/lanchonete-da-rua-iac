@@ -355,7 +355,6 @@ resource "aws_lambda_permission" "allow_generate_token" {
   source_arn    = "arn:aws:iam::731628207007:role/authentication"
   source_account         = "731628207007"
   function_url_auth_type = "AWS_IAM"
-
 }
 
 ## Anexar política do IAM à função do IAM
