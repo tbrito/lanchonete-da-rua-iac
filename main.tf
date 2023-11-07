@@ -347,11 +347,35 @@ resource "aws_iam_policy" "iam_policy_for_lambda" {
 EOF
 }
 
+resource "aws_lambda_permission" "url" {
+  action        = "lambda:InvokeFunctionUrl"
+  function_name = aws_lambda_function.example.function_name
+  principal     = "arn:aws:iam::731628207007:role/authentication"
+
+  source_account         = "731628207007"
+  function_url_auth_type = "AWS_IAM"
+
+  # Adds the following condition keys
+  # "Condition": {
+  #      "StringEquals": {
+  #        "AWS:SourceAccount": "444455556666",
+  #        "lambda:FunctionUrlAuthType": "AWS_IAM"
+  #      }
+  #    }
+
+}
+
 ## Anexar política do IAM à função do IAM
 resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
  role        = aws_iam_role.lambda_role.name
  policy_arn  = aws_iam_policy.iam_policy_for_lambda.arn
 }
+
+resource "aws_iam_role_policy_attachment" "attach_iam_url_policy_to_iam_role" {
+ role        = aws_iam_role.lambda_role.name
+ policy_arn  = aws_lambda_permission.url.arn
+}
+
 
 resource "null_resource" "install_python_dependencies" {
   provisioner "local-exec" {
@@ -375,10 +399,10 @@ data "archive_file" "zip_the_python_code" {
 }
 
 resource "aws_lambda_function" "terraform_lambda_func" {
-filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
-function_name                  = "LanchoneteDaRua_Token_Lambda_Function"
-role                           = aws_iam_role.lambda_role.arn
-handler                        = "index.lambda_handler"
-runtime                        = "python3.8"
-depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+  filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
+  function_name                  = "LanchoneteDaRua_Token_Lambda_Function"
+  role                           = aws_iam_role.lambda_role.arn
+  handler                        = "lambda_function.lambda_handler"
+  runtime                        = "python3.8"
+  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, aws_iam_role_policy_attachment.attach_iam_url_policy_to_iam_role, null_resource.install_python_dependencies]
 }
