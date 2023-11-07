@@ -371,11 +371,11 @@ data "archive_file" "zip_the_python_code" {
   depends_on = ["null_resource.install_python_dependencies"]
   type        = "zip"
   source_dir  = "${path.module}/generate_token/"
-  output_path = "${path.module}/generate_token/generate-token.zip"
+  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
 }
 
 resource "aws_lambda_function" "terraform_lambda_func" {
-filename                       = "${path.module}/generate_token/hello-python.zip"
+filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
 function_name                  = "LanchoneteDaRua_Token_Lambda_Function"
 role                           = aws_iam_role.lambda_role.arn
 handler                        = "index.lambda_handler"
