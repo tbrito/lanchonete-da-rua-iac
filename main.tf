@@ -354,7 +354,6 @@ resource "aws_lambda_permission" "url" {
 
   source_account         = "731628207007"
   function_url_auth_type = "AWS_IAM"
-
 }
 
 ## Anexar política do IAM à função do IAM
@@ -363,33 +362,12 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
  policy_arn  = aws_iam_policy.iam_policy_for_lambda.arn
 }
 
-
-resource "null_resource" "install_python_dependencies" {
-  provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/create_pkg.sh"
-
-    environment = {
-      source_code_path = "generate_token"
-      function_name = "LanchoneteDaRua_Token_Lambda_Function"
-      path_module = path.module
-      runtime = "python3.8"
-      path_cwd = path.cwd
-    }
-  }
-}
-
-data "archive_file" "zip_the_python_code" {
-  depends_on = ["null_resource.install_python_dependencies"]
-  type        = "zip"
-  source_dir  = "${path.module}/generate_token/"
-  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
-}
-
-resource "aws_lambda_function" "terraform_lambda_func" {
-  filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
+resource "aws_lambda_function" "generate_token_function" {
+  #filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
+  source_code_hash               = null
   function_name                  = "LanchoneteDaRua_Token_Lambda_Function"
   role                           = aws_lambda_permission.url
   handler                        = "lambda_function.lambda_handler"
   runtime                        = "python3.8"
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, aws_lambda_permission.url, null_resource.install_python_dependencies]
+  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, aws_lambda_permission.url]
 }
