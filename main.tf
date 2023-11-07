@@ -349,7 +349,7 @@ EOF
 
 resource "aws_lambda_permission" "url" {
   action        = "lambda:InvokeFunctionUrl"
-  function_name = aws_lambda_function.generate_token_function.LanchoneteDaRua_Token
+  function_name = aws_lambda_function.generate_token_function.LanchoneteDaRuaGenerateToken
   principal     = "arn:aws:iam::731628207007:role/authentication"
 
   source_account         = "731628207007"
@@ -369,7 +369,7 @@ resource "null_resource" "install_python_dependencies" {
 
     environment = {
       source_code_path = "generate_token"
-      function_name    = "LanchoneteDaRua_Token_Lambda_Function"
+      function_name    = "LanchoneteDaRuaGenerateToken"
       path_module      = path.module
       runtime          = "python3.8"
       path_cwd         = path.cwd
@@ -386,7 +386,7 @@ data "archive_file" "zip_the_python_code" {
 
 resource "aws_lambda_function" "generate_token_function" {
   filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
-  function_name                  = "LanchoneteDaRua_Token"
+  function_name                  = "LanchoneteDaRuaGenerateToken"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
   runtime                        = "python3.8"
