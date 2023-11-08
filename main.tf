@@ -405,12 +405,12 @@ resource "null_resource" "install_python_dependencies" {
   }
 }
 
- data "archive_file" "zip_the_python_code_2" {
-  depends_on  = [null_resource.create_package]
-  type        = "zip"
-  source_dir  = "${path.module}/check_token/"
-  output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
- }
+#  data "archive_file" "zip_the_python_code_2" {
+#   depends_on  = [null_resource.create_package]
+#   type        = "zip"
+#   source_dir  = "${path.module}/check_token/"
+#   output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
+#  }
 
   resource "aws_lambda_function" "check_token_function" {
   filename                       = "${path.module}/lambda_dist_pkg/check_token.zip"
