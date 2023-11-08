@@ -196,111 +196,105 @@ resource "aws_ecr_repository" "lanchonetedarua_ecr_repo" {
   name = "lanchonete-da-rua-ecr"
 }
 
-# ###ECS
+# ECS Cluster
 resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
-  name = "lanchonetedarua-cluster" 
+  name = "lanchonetedarua-cluster"
 }
 
+# ECS Task Definition
 resource "aws_ecs_task_definition" "app_task" {
-  family                   = "connect-image-lanchonete-to-ecs-task" # Name your task
-  container_definitions    = <<DEFINITION
-  [
+  family                   = "app-task-family"
+  network_mode             = "bridge"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "256"
+  memory                   = "512"
+
+  container_definitions = jsonencode([
     {
-      "name": "connect-image-lanchonete-to-ecs-task",
-      "image": "${aws_ecr_repository.lanchonetedarua_ecr_repo.repository_url}",
-      "essential": true,
-      "portMappings": [
+      name  = "lanchonetedarua",
+      image = "990304834518.dkr.ecr.us-east-1.amazonaws.com/lanchonete-da-rua:latest",
+      cpu   = 256,
+      memory = 512,
+      ports = [
         {
-          "containerPort": 5000,
-          "hostPort": 5000
-        }
+          containerPort = 5000,
+          hostPort      = 5000
+        },
       ],
-      "memory": 512,
-      "cpu": 256
-    }
-  ]
-  DEFINITION
-  requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
-  network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
-  memory                   = 512         # Specify the memory the container requires
-  cpu                      = 256         # Specify the CPU the container requires
-  execution_role_arn       = "${aws_iam_role.ecsTaskExecutionRole.arn}"
+    },
+  ])
 }
 
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name               = "ecsTaskExecutionRole"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
+# ECS Service
+resource "aws_ecs_service" "app_service" {
+  name            = "app-service"
+  cluster         = aws_ecs_cluster.lanchonetedarua_cluster.id
+  task_definition = aws_ecs_task_definition.app_task.arn
+  launch_type     = "EC2"
+  desired_count   = 1
 }
 
-data "aws_iam_policy_document" "assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRole"]
+# IAM Role for ECS Instance
+resource "aws_iam_role" "ecs_instance_role" {
+  name = "ecs-instance-role"
 
-    principals {
-      type        = "Service"
-      identifiers = ["ecs-tasks.amazonaws.com"]
-    }
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        },
+      },
+    ],
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_role_policy_attachment" {
+  role       = aws_iam_role.ecs_instance_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+# IAM Instance Profile for ECS
+resource "aws_iam_instance_profile" "ecs_instance_profile" {
+  name = "ecs-instance-profile"
+  role = aws_iam_role.ecs_instance_role.name
+}
+
+# ECS Optimized AMI
+data "aws_ami" "ecs_optimized" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
   }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["amazon"] # Amazon ECS AMI owner ID
 }
 
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
-  role       = "${aws_iam_role.ecsTaskExecutionRole.name}"
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+# EC2 Instance for ECS Cluster
+resource "aws_instance" "ecs_host" {
+  ami           = data.aws_ami.ecs_optimized.id
+  instance_type = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
+
+  user_data = <<-EOF
+              #!/bin/bash
+              echo ECS_CLUSTER=${aws_ecs_cluster.lanchonetedarua_cluster.name} >> /etc/ecs/ecs.config
+              EOF
 }
 
-# # Load Balance
-# resource "aws_alb" "application_load_balancer" {
-#   name               = "load-balancer-dev" #load balancer name
-#   load_balancer_type = "application"
-#   subnets = [ # Referencing the default subnets
-#     "${aws_default_subnet.default_subnet_a.id}",
-#     "${aws_default_subnet.default_subnet_b.id}"
-#   ]
-#   # security group
-#   security_groups = ["${aws_security_group.load_balancer_security_group.id}"]
-# }
+# CloudWatch Log Group for ECS
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name = "/ecs/lanchonetedarua-cluster"
+}
 
-# #aws_lb_target_group
-# resource "aws_lb_target_group" "target_group" {
-#   name        = "target-group"
-#   port        = 80
-#   protocol    = "HTTP"
-#   target_type = "ip"
-#   vpc_id      = "${aws_default_vpc.default_vpc.id}" # default VPC
-# }
-
-# resource "aws_lb_listener" "listener" {
-#   load_balancer_arn = "${aws_alb.application_load_balancer.arn}" #  load balancer
-#   port              = "80"
-#   protocol          = "HTTP"
-#   default_action {
-#     type             = "forward"
-#     target_group_arn = "${aws_lb_target_group.target_group.arn}" # target group
-#   }
-# }
-
-# ## ECS Service
-# resource "aws_ecs_service" "app_service" {
-#   name            = "app-first-service"     # Name the service
-#   cluster         = "${aws_ecs_cluster.lanchonetedarua_cluster.id}"   # Reference the created Cluster
-#   task_definition = "${aws_ecs_task_definition.app_task.arn}" # Reference the task that the service will spin up
-#   launch_type     = "FARGATE"
-#   desired_count   = 3 # Set up the number of containers to 3
-
-#   load_balancer {
-#     target_group_arn = "${aws_lb_target_group.target_group.arn}" # Reference the target group
-#     container_name   = "${aws_ecs_task_definition.app_task.family}"
-#     container_port   = 5000 # Specify the container port
-#   }
-
-#   network_configuration {
-#     subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
-#     assign_public_ip = true     # Provide the containers with public IPs
-#     security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
-#   }
-# }
-
-# #Log the load balancer app URL
-# output "app_url" {
-#   value = aws_alb.application_load_balancer.dns_name
-# }
+# Output the ECS Cluster Name
+output "ecs_cluster_name" {
+  value = aws_ecs_cluster.lanchonetedarua_cluster.name
+}
