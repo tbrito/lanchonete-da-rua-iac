@@ -394,7 +394,7 @@ resource "null_resource" "install_python_dependencies" {
 
  resource "null_resource" "create_package" {
   provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/create_pkg2.sh"
+    command = "bash ${path.module}/scripts/create_pkg.sh"
     environment = {
       source_code_path = "check_token"
       function_name    = "check_token"
@@ -405,15 +405,15 @@ resource "null_resource" "install_python_dependencies" {
   }
 }
 
-#  data "archive_file" "zip_the_python_code_2" {
-#   depends_on  = [null_resource.create_package]
-#   type        = "zip"
-#   source_dir  = "${path.module}/check_token/"
-#   output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
-#  }
+ data "archive_file" "zip_the_python_code_2" {
+  depends_on  = [null_resource.create_package]
+  type        = "zip"
+  source_dir  = "${path.module}/check_token/"
+  output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
+ }
 
   resource "aws_lambda_function" "check_token_function" {
-  filename                       = "${path.module}/check_token/check_token.zip"
+  filename                       = "${path.module}/lambda_dist_pkg/check_token.zip"
   function_name                  = "check_token"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
