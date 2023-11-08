@@ -1300,65 +1300,50 @@ resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
  policy_arn  = aws_iam_policy.iam_policy_for_lambda.arn
 }
 
-resource "null_resource" "install_python_dependencies" {
-  provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/create_pkg.sh"
-    environment = {
-      source_code_path = "generate_token"
-      function_name    = "lanchonete_generate_token"
-      path_module      = path.module
-      runtime          = "python3.8"
-      path_cwd         = path.cwd
-    }
-  }
-}
 
 # LAMBDA GENERATE TOKEN
 
- data "archive_file" "zip_the_python_code" {
-  depends_on  = [null_resource.install_python_dependencies]
-  type        = "zip"
-  source_dir  = "${path.module}/generate_token/"
-  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
- }
 
- resource "aws_lambda_function" "generate_token_function" {
-  filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
-  function_name                  = "lanchonete_generate_token"
-  role                           = aws_iam_role.lambda_role.arn
-  handler                        = "lambda_function.lambda_handler"
-  runtime                        = "python3.8"
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
- }
+resource "aws_lambda_function" "generate_token_function" {
+  filename      = "${path.module}/lambda_dist_pkg/generate-token.zip"
+  function_name = "lanchonete_generate_token"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "lambda_function.lambda_handler"
+  runtime       = "python3.8"
+
+  # Install Python dependencies
+  provisioner "local-exec" {
+    command = "pip install -r ${path.module}/generate_token/requirements.txt -t ${path.module}/generate_token/"
+  }
+
+  # Zip Python code
+  provisioner "local-exec" {
+    command = "cd ${path.module}/generate_token/ && zip -r ${path.module}/lambda_dist_pkg/generate-token.zip *"
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+}
 
 # LAMBDA CHECK TOKEN
 
- resource "null_resource" "create_package" {
-  provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/create_pkg.sh"
-    environment = {
-      source_code_path = "check_token"
-      function_name    = "check_token"
-      path_module      = path.module
-      runtime          = "python3.8"
-      path_cwd         = path.cwd
-    }
-  }
-}
-
- data "archive_file" "zip_the_python_code_2" {
-  depends_on  = [null_resource.create_package]
-  type        = "zip"
-  source_dir  = "${path.module}/check_token/"
-  output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
- }
-
   resource "aws_lambda_function" "check_token_function" {
-  filename                       = "${path.module}/lambda_dist_pkg/check_token.zip"
+  filename                       = "${path.module}/lambda_dist_pkg/check_token"
   function_name                  = "check_token"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
   runtime                        = "python3.8"
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+
+  # Install Python dependencies
+  provisioner "local-exec" {
+    command = "pip install -r ${path.module}/check_token/requirements.txt -t ${path.module}/check_token/"
+  }
+
+  # Zip Python code
+  provisioner "local-exec" {
+    command = "cd ${path.module}/check_token/ && zip -r ${path.module}/lambda_dist_pkg/check_token *"
+  }
+
+
+  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
  }
 
