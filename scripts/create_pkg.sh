@@ -36,6 +36,10 @@ deactivate
 echo "Creating deployment package..."
 cp -r $path_cwd/$function_name/* $path_cwd/$dir_name
 
+# Create a ZIP file of the package directory...
+cd $path_cwd/$dir_name
+zip -r ./$function_name.zip .
+
 # Removing virtual environment folder...
 echo "Removing virtual environment folder..."
 # rm -rf $path_cwd/env_$function_name
