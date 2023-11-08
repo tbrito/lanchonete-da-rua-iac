@@ -1,6 +1,7 @@
 import json
 import boto3
 import jwt
+import psycopg2
 
 TOKEN_SECRET_NAME = "token-secret"  # Nome do segredo no AWS Secret Manager
 POSTGRES_SECRET_NAME = "postgres-secret"  # Nome do segredo no AWS Secret Manager
@@ -47,9 +48,30 @@ def validate_cpf(cpf):
     db_password = postgres_secret["password"]
     db_uri = f"postgresql://{db_user}:{db_password}@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
 
-    if cpf == "12345678900": #Somente um exemplo
-        return True
-    pass
+    try:
+        # Estabelece uma conexão com o banco de dados
+        connection = psycopg2.connect(db_uri)
+        # Cria um cursor para executar consultas
+        cursor = connection.cursor()
+        # Consulta SQL para verificar se o CPF está na tabela cliente
+        query = f"SELECT * FROM cliente WHERE cpf = %s"
+        # Executa a consulta com o CPF fornecido
+        cursor.execute(query, (cpf,))
+        # Recupera os resultados da consulta
+        result = cursor.fetchone()
+        cursor.close()
+        connection.close()
+        
+        # Se a consulta retornar um resultado, o CPF está na tabela
+        if result:
+            return True
+        else:
+            return False
+    except Exception as e:
+        # Lida com erros de conexão ou consulta
+        print(f"Erro ao validar CPF: {e}")
+        return False
+
 
 def get_secret_value(secret_name):
     # Conecte-se ao AWS Secret Manager e recupere o valor do segredo
