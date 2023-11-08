@@ -212,7 +212,7 @@ resource "aws_ecs_task_definition" "app_task" {
   container_definitions = jsonencode([
     {
       name  = "lanchonetedarua",
-      image = "990304834518.dkr.ecr.us-east-1.amazonaws.com/lanchonete-da-rua:latest",
+      image   = "990304834518.dkr.ecr.us-east-1.amazonaws.com/lanchonete-da-rua-ecr:lanchonete-da-rua-api-latest"
       cpu   = 256,
       memory = 512,
       ports = [
