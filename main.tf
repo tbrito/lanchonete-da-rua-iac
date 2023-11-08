@@ -1126,9 +1126,6 @@ resource "aws_ssm_parameter" "postgres_uri" {
 }
 
 # ECS Task Definition
-resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
-  name = "lanchonetedarua-cluster"
-}
 
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "app-task-family"
