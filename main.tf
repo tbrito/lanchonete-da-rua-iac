@@ -347,15 +347,15 @@ resource "aws_iam_policy" "iam_policy_for_lambda" {
 EOF
 }
 
-# resource "aws_lambda_permission" "allow_generate_token" {
-#   statement_id  = "AllowMyroleAuthentication"
-#   action        = "lambda:InvokeFunction"
-#   function_name = aws_lambda_function.generate_token_function.lanchonete_generate_token
-#   principal     = "events.amazonaws.com"
-#   source_arn    = "arn:aws:iam::731628207007:role/authentication"
-#   source_account         = "731628207007"
-#   function_url_auth_type = "AWS_IAM"
-# }
+ resource "aws_lambda_permission" "allow_generate_token" {
+   statement_id  = "AllowMyroleAuthentication"
+   action        = "lambda:InvokeFunction"
+   function_name = aws_lambda_function.generate_token_function.lanchonete_generate_token
+   principal     = "events.amazonaws.com"
+   source_arn    = "arn:aws:iam::990304834518:role/authentication"
+   source_account         = "990304834518"
+   function_url_auth_type = "AWS_IAM"
+ }
 
 ## Anexar política do IAM à função do IAM
 resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
