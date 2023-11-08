@@ -350,6 +350,7 @@ resource "aws_lambda_permission" "allow_generate_token" {
     source_arn    = "arn:aws:iam::990304834518:role/authentication"
     source_account         = "990304834518"
     function_url_auth_type = "AWS_IAM"
+    depends_on                     = [aws_lambda_function.generate_token_function]
 }
 
 ## Anexar política do IAM à função do IAM
@@ -384,6 +385,6 @@ resource "null_resource" "install_python_dependencies" {
   function_name                  = "lanchonete_generate_token"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
-  runtime                        = "python3.9"
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies, aws_lambda_permission.allow_generate_token]
+  runtime                        = "python3.8"
+  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
  }
