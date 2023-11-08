@@ -209,21 +209,38 @@ resource "aws_ecs_task_definition" "app_task" {
   cpu                      = "256"
   memory                   = "512"
 
-  container_definitions = jsonencode([
-    {
-      name  = "lanchonetedarua",
-      image   = "990304834518.dkr.ecr.us-east-1.amazonaws.com/lanchonete-da-rua-ecr:lanchonete-da-rua-api-latest"
-      cpu   = 256,
-      memory = 512,
-      ports = [
-        {
-          containerPort = 5000,
-          hostPort      = 5000
-        },
-      ],
-    },
-  ])
+  container_definitions = jsonencode([{
+    name  = "lanchonetedarua",
+    image = "990304834518.dkr.ecr.us-east-1.amazonaws.com/lanchonete-da-rua-ecr:lanchonete-da-rua-api-latest",
+    cpu   = 256,
+    memory = 512,
+    ports = [
+      {
+        containerPort = 5000,
+        hostPort      = 5000
+      },
+    ],
+    environment = [
+      {
+        name  = "POSTGRES_USER",
+        value = "postgres"
+      },
+      {
+        name  = "POSTGRES_PASSWORD",
+        value = "dblanchonetederuapass"
+      },
+      {
+        name  = "POSTGRES_DB",
+        value = "lanchonetedarua"
+      },
+      {
+        name  = "DATABASE_URI",
+        value = "postgresql://postgres:dblanchonetederuapass@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
+      }
+    ],
+  }])
 }
+
 
 # ECS Service
 resource "aws_ecs_service" "app_service" {
