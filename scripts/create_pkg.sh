@@ -11,7 +11,7 @@ virtualenv -p $runtime env_$function_name
 source $path_cwd/env_$function_name/bin/activate
 
 # Installing python dependencies...
-FILE=$path_cwd/generate_token/requirements.txt
+FILE=$path_cwd/$function_name/requirements.txt
 
 if [ -f "$FILE" ]; then
   echo "Installing dependencies..."
@@ -29,7 +29,7 @@ deactivate
 echo "Creating deployment package..."
 cd env_$function_name/lib/$runtime/site-packages/
 cp -r . $path_cwd/$dir_name
-cp -r $path_cwd/generate_token/ $path_cwd/$dir_name
+cp -r $path_cwd/$function_name/ $path_cwd/$dir_name
 
 # Removing virtual environment folder...
 echo "Removing virtual environment folder..."
