@@ -24,24 +24,923 @@ provider "aws" {
 
 resource "aws_api_gateway_rest_api" "lanchonetedarua" {
   body = jsonencode({
-    openapi = "3.0.1"
-    info = {
-      title   = "lanchonetedarua"
-      version = "1.0"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Lanchonete da rua",
+    "description": "Api Restful da lanchonete da rua",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://192.168.10.20"
     }
-    paths = {
-      "/categorias" = {
-        get = {
-          x-amazon-apigateway-integration = {
-            httpMethod           = "GET"
-            payloadFormatVersion = "1.0"
-            type                 = "HTTP_PROXY"
-            uri                  = "https://54.160.159.154/categoria"
+  ],
+  "paths": {
+    "/categorias/": {
+      "get": {
+        "tags": [
+          "categorias"
+        ],
+        "operationId": "get_categorias_no_parameters",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "categorias"
+        ],
+        "operationId": "post_categorias_no_parameters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categorias"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/categorias/{categoria_id}": {
+      "get": {
+        "tags": [
+          "categorias"
+        ],
+        "operationId": "obter um categoria por id",
+        "parameters": [
+          {
+            "name": "categoria_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "categorias"
+        ],
+        "operationId": "atualiza um categoria por id",
+        "parameters": [
+          {
+            "name": "categoria_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/categorias"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      },
+      "delete": {
+        "tags": [
+          "categorias"
+        ],
+        "operationId": "excluir um categoria por id",
+        "parameters": [
+          {
+            "name": "categoria_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/clientes/": {
+      "get": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "Obter todos os clientes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "Criar um cliente",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/clientes"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/clientes/cpf/{cpf}": {
+      "get": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "obter um cliente por cpf",
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/clientes/{cliente_id}": {
+      "get": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "obter um cliente por id",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "atualiza um cliente por id",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/clientes"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      },
+      "delete": {
+        "tags": [
+          "clientes"
+        ],
+        "operationId": "excluir um cliente por id",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/": {
+      "get": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Obter lista de pedidos",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Criar um novo pedido",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/pedido"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/pedidos/na-fila": {
+      "get": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "get_fila_atendimento_no_parameters",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/pagamento-webhook": {
+      "post": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Webhook para atualização do status do pagamento do pedido",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/pagamento"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/pedidos/pedidos-nao-finalizados": {
+      "get": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Obter lista de pedidos não finalizados",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}": {
+      "get": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "obter um pedido por id",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "description": "Id do Pedido",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {}
+          },
+          "404": {
+            "description": "Pedido não encontrado",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/checkout": {
+      "post": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Checkout de pedidos",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/encaminhar-para-entrega": {
+      "patch": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Encaminhar para entrega ao cliente",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "description": "Id do Pedido",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {}
+          },
+          "400": {
+            "description": "Erro ao encaminhar pedido",
+            "content": {}
+          },
+          "404": {
+            "description": "Pedido não encontrado",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/encaminhar-para-pagamento": {
+      "patch": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Fechar pedido para iniciar processo de pagamento",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "description": "Id do Pedido",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {}
+          },
+          "400": {
+            "description": "Erro ao encaminhar pedido",
+            "content": {}
+          },
+          "404": {
+            "description": "Pedido não encontrado",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/finalizar-pedido": {
+      "patch": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Finalizar pedido já entregue",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "description": "Id do Pedido",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {}
+          },
+          "400": {
+            "description": "Erro ao encaminhar pedido",
+            "content": {}
+          },
+          "404": {
+            "description": "Pedido não encontrado",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/itens": {
+      "post": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Obter todos os itens de um pedido",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemPedido"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/pedidos/{pedido_id}/itens/{item_pedido_id}": {
+      "put": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Atualizar um item do pedido",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item_pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/itemPedido"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      },
+      "delete": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "excluir um item pedido por id",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "item_pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/status-pagamento": {
+      "get": {
+        "tags": [
+          "pedido"
+        ],
+        "operationId": "Consulta status do pagamento do pedido",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/produtos/": {
+      "get": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "get_produtos_no_parameters",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "post_produtos_no_parameters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/produtos"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      }
+    },
+    "/produtos/categoria/{categoria_id}": {
+      "get": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "obter produtos por categoria",
+        "parameters": [
+          {
+            "name": "categoria_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/produtos/{produto_id}": {
+      "get": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "obter um produto por id",
+        "parameters": [
+          {
+            "name": "produto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "atualiza um produto por id",
+        "parameters": [
+          {
+            "name": "produto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/produtos"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "payload"
+      },
+      "delete": {
+        "tags": [
+          "produtos"
+        ],
+        "operationId": "excluir um produto por id",
+        "parameters": [
+          {
+            "name": "produto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {}
           }
         }
       }
     }
-  })
+  },
+  "components": {
+    "schemas": {
+      "categorias": {
+        "required": [
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "nome do categorias"
+          }
+        }
+      },
+      "clientes": {
+        "required": [
+          "cpf",
+          "nome",
+          "telefone"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "nome do cliente"
+          },
+          "cpf": {
+            "type": "string",
+            "description": "cpf do cliente"
+          },
+          "telefone": {
+            "type": "string",
+            "description": "telefone do cliente"
+          }
+        }
+      },
+      "produtos": {
+        "required": [
+          "categoria_id",
+          "descricao",
+          "nome"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "nome do produto"
+          },
+          "categoria_id": {
+            "type": "integer",
+            "description": "Id da Categoria"
+          },
+          "descricao": {
+            "type": "string",
+            "description": "descrição do produto"
+          }
+        }
+      },
+      "pedido": {
+        "type": "object",
+        "properties": {
+          "cliente_id": {
+            "type": "integer",
+            "description": "Id do cliente"
+          },
+          "observacoes": {
+            "type": "string",
+            "description": "Observações do pedido"
+          }
+        }
+      },
+      "itemPedido": {
+        "required": [
+          "pedido_id",
+          "produto_id",
+          "quantidade",
+          "valor"
+        ],
+        "type": "object",
+        "properties": {
+          "pedido_id": {
+            "type": "integer",
+            "description": "Id do pedido"
+          },
+          "produto_id": {
+            "type": "integer",
+            "description": "Id do produto"
+          },
+          "quantidade": {
+            "type": "integer",
+            "description": "valor do produto"
+          },
+          "valor": {
+            "type": "number",
+            "description": "valor do produto"
+          }
+        }
+      },
+      "pagamento": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID do pagamento"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do pagamento",
+            "example": "approved",
+            "enum": [
+              "approved",
+              "rejected"
+            ]
+          },
+          "external_reference": {
+            "type": "integer",
+            "description": "O ID externo (ID do pedido)"
+          }
+        }
+      }
+    },
+    "responses": {
+      "ParseError": {
+        "description": "When a mask can't be parsed",
+        "content": {}
+      },
+      "MaskError": {
+        "description": "When any error occurs on mask",
+        "content": {}
+      }
+    }
+  },
+  "x-original-swagger-version": "2.0"
+})
 
   name = "lanchonetedarua"
 
