@@ -76,7 +76,7 @@ jobs:
     - name: Set up AWS CLI
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        aws-region: us-east-1
+        aws-region: us-west-1
         
     # Install the latest version of Terraform CLI and configure thess Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform

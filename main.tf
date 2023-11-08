@@ -17,7 +17,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-west-1"
 }
 
 ### GATEWAYs
@@ -30,14 +30,15 @@ resource "aws_api_gateway_rest_api" "lanchonetedarua" {
     "description": "Api Restful da lanchonete da rua",
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "http://192.168.10.20"
-    }
-  ],
   "paths": {
     "/categorias/": {
       "get": {
+        x-amazon-apigateway-integration = {
+            httpMethod           = "GET"
+            payloadFormatVersion = "1.0"
+            type                 = "HTTP"
+            uri                  = "http://34.201.94.34"
+        },
         "tags": [
           "categorias"
         ],
@@ -975,12 +976,12 @@ resource "aws_default_vpc" "default_vpc" {
 # Provide references to your default subnets
 resource "aws_default_subnet" "default_subnet_a" {
   # Use your own region here but reference to subnet 1a
-  availability_zone = "us-east-1a"
+  availability_zone = "us-west-1a"
 }
 
 resource "aws_default_subnet" "default_subnet_b" {
   # Use your own region here but reference to subnet 1b
-  availability_zone = "us-east-1b"
+  availability_zone = "us-west-1b"
 }
 
 resource "aws_security_group" "load_balancer_security_group" {
@@ -1122,7 +1123,7 @@ resource "aws_ssm_parameter" "postgres_db" {
 resource "aws_ssm_parameter" "postgres_uri" {
   name  = "/app/postgres/URI"
   type  = "String"
-  value = "postgresql://postgres:dblanchonetederuapass@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
+  value = "postgresql://postgres:dblanchonetederuapass@lanchonetedarua3.co2eflozi4t9.us-west-1.rds.amazonaws.com/postgres"
 }
 
 # ECS Task Definition
