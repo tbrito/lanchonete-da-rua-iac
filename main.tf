@@ -413,7 +413,7 @@ resource "null_resource" "install_python_dependencies" {
 #  }
 
   resource "aws_lambda_function" "check_token_function" {
-  filename                       = "${path.module}/lambda_dist_pkg/check_token.zip"
+  filename                       = "${path.module}/check_token/check_token.zip"
   function_name                  = "check_token"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
