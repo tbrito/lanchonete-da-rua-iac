@@ -1403,7 +1403,7 @@ resource "aws_lambda_function" "generate_token_function" {
 # LAMBDA CHECK TOKEN
 
   resource "aws_lambda_function" "check_token_function" {
-  filename                       = "${path.module}/lambda_dist_pkg/check_token"
+  filename                       = "${path.module}/lambda_dist_pkg/check-token.zip"
   function_name                  = "check_token"
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
@@ -1416,7 +1416,7 @@ resource "aws_lambda_function" "generate_token_function" {
 
   # Zip Python code
   provisioner "local-exec" {
-    command = "cd ${path.module}/check_token/ && zip -r ${path.module}/lambda_dist_pkg/check_token *"
+    command = "cd ${path.module}/check_token/ && zip -r ${path.module}/lambda_dist_pkg/check-token.zip *"
   }
 
 
