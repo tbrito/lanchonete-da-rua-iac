@@ -1370,6 +1370,18 @@ resource "aws_lambda_permission" "allow_generate_token" {
     depends_on                     = [aws_lambda_function.generate_token_function]
 }
 
+resource "aws_lambda_permission" "allow_check_token" {
+    statement_id  = "AllowMyroleAuthentication"
+    action        = "lambda:InvokeFunctionUrl"
+    function_name = "check_token"
+    principal     = "events.amazonaws.com"
+    source_arn    = "arn:aws:iam::990304834518:role/authentication"
+    source_account         = "990304834518"
+    function_url_auth_type = "AWS_IAM"
+    depends_on                     = [aws_lambda_function.check_token_function]
+}
+
+
 ## Anexar política do IAM à função do IAM
 resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
  role        = aws_iam_role.lambda_role.name
