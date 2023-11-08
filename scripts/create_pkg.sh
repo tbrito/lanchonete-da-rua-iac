@@ -15,11 +15,11 @@ FILE=$path_cwd/$function_name/requirements.txt
 
 if [ -f "$FILE" ]; then
   echo "Installing dependencies..."
-  echo "From: requirement.txt file exists..."
+  echo "From: requirements.txt file exists..."
   pip install -r "$FILE" -t $path_cwd/$dir_name
 
 else
-  echo "Error: requirement.txt does not exist!"
+  echo "Error: requirements.txt does not exist!"
 fi
 
 # Deactivate virtual environment...

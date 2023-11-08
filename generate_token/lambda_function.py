@@ -3,9 +3,7 @@ import boto3
 import jwt
 
 TOKEN_SECRET_NAME = "token-secret"  # Nome do segredo no AWS Secret Manager
-POSTGRES_PASSWORD_SECRET_NAME = "postgres-password"  # Nome do segredo no AWS Secret Manager
-POSTGRES_USER_SECRET_NAME = "postgres-user"  # Nome do segredo no AWS Secret Manager
-
+POSTGRES_SECRET_NAME = "postgres-secret"  # Nome do segredo no AWS Secret Manager
 
 def lambda_handler(event, context):
     # Recebe o CPF a partir do evento de entrada 
@@ -44,8 +42,9 @@ def lambda_handler(event, context):
     }
 
 def validate_cpf(cpf):
-    db_user = get_secret_value(POSTGRES_USER_SECRET_NAME)
-    db_password = get_secret_value(POSTGRES_USER_SECRET_NAME)
+    postgres_secret = get_secret_value(POSTGRES_SECRET_NAME)
+    db_user = postgres_secret["username"]
+    db_password = postgres_secret["password"]
     db_uri = f"postgresql://{db_user}:{db_password}@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
 
     if cpf == "12345678900": #Somente um exemplo
