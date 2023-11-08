@@ -984,6 +984,8 @@ resource "aws_default_subnet" "default_subnet_b" {
 }
 
 resource "aws_security_group" "load_balancer_security_group" {
+  vpc_id = module.vpc.vpc_id  
+
   ingress {
     from_port   = 80
     to_port     = 80
@@ -998,6 +1000,7 @@ resource "aws_security_group" "load_balancer_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
 resource "aws_security_group" "service_security_group" {
   ingress {
@@ -1264,8 +1267,8 @@ resource "aws_lb" "example" {
   name               = "my-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.load_balancer_security_group.id]
-  subnets            = module.vpc.public_subnets
+  security_groups    = [aws_security_group.load_balancer_security_group.id]  
+  subnets            = module.vpc.public_subnets  
 
   enable_deletion_protection = false
 
@@ -1273,6 +1276,7 @@ resource "aws_lb" "example" {
     Name = "my-lb"
   }
 }
+
 
 resource "aws_lb_target_group" "example" {
   name     = "my-tg"
