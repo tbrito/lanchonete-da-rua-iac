@@ -1405,14 +1405,13 @@ resource "aws_lambda_function" "generate_token_function" {
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.8"
 
-  # Install Python dependencies
+   # Install Python dependencies and Zip Python code
   provisioner "local-exec" {
-    command = "pip install -r ${path.module}/generate_token/requirements.txt -t ${path.module}/generate_token/"
-  }
-
-  # Zip Python code
-  provisioner "local-exec" {
-    command = "cd ${path.module}/generate_token/ && zip -r ${path.module}/lambda_dist_pkg/generate-token.zip *"
+    command = <<-EOT
+      cd ${path.module}/generate_token/
+      pip install -r requirements.txt -t .
+      zip -r ${path.module}/lambda_dist_pkg/generate-token.zip .
+    EOT
   }
 
   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
@@ -1427,16 +1426,14 @@ resource "aws_lambda_function" "check_token_function" {
   handler                        = "lambda_function.lambda_handler"
   runtime                        = "python3.8"
 
-  # Install Python dependencies
+   # Install Python dependencies and Zip Python code
   provisioner "local-exec" {
-    command = "pip install -r ${path.module}/check_token/requirements.txt -t ${path.module}/check_token/"
+    command = <<-EOT
+      cd ${path.module}/check_token/
+      pip install -r requirements.txt -t .
+      zip -r ${path.module}/lambda_dist_pkg/check-token.zip .
+    EOT
   }
-
-  # Zip Python code
-  provisioner "local-exec" {
-    command = "cd ${path.module}/check_token/ && zip -r ${path.module}/lambda_dist_pkg/check-token.zip *"
-  }
-
 
   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }
