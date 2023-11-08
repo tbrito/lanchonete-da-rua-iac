@@ -352,8 +352,8 @@ resource "aws_lambda_permission" "allow_generate_token" {
    action        = "lambda:InvokeFunction"
    function_name = aws_lambda_function.generate_token_function.lanchonete_generate_token
    principal     = "events.amazonaws.com"
-   source_arn    = "arn:aws:iam::731628207007:role/authentication"
-   source_account         = "731628207007"
+   source_arn    = "arn:aws:iam::990304834518:role/authentication"
+   source_account         = "990304834518"
    function_url_auth_type = "AWS_IAM"
 }
 
