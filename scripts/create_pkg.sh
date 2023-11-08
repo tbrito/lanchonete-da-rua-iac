@@ -16,7 +16,7 @@ FILE=$path_cwd/$function_name/requirements.txt
 if [ -f "$FILE" ]; then
   echo "Installing dependencies..."
   echo "From: requirement.txt file exists..."
-  pip install -r "$FILE"
+  pip install -r "$FILE" -t $path_cwd/$dir_name
 
 else
   echo "Error: requirement.txt does not exist!"
@@ -29,7 +29,7 @@ deactivate
 echo "Creating deployment package..."
 cd env_$function_name/lib/$runtime/site-packages/
 cp -r . $path_cwd/$dir_name
-cp -r $path_cwd/$function_name/ $path_cwd/$dir_name
+cp -r $path_cwd/$function_name/* $path_cwd/$dir_name
 
 # Removing virtual environment folder...
 echo "Removing virtual environment folder..."
