@@ -1414,7 +1414,7 @@ resource "aws_lambda_function" "generate_token_function" {
 
 # LAMBDA CHECK TOKEN
 
-  resource "aws_lambda_function" "check_token_function" {
+resource "aws_lambda_function" "check_token_function" {
   filename                       = "${path.module}/lambda_dist_pkg/check-token.zip"
   function_name                  = "check_token"
   role                           = aws_iam_role.lambda_role.arn
@@ -1433,5 +1433,5 @@ resource "aws_lambda_function" "generate_token_function" {
 
 
   depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
- }
+}
 
