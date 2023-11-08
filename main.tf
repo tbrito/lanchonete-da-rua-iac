@@ -1132,8 +1132,8 @@ resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
 
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "app-task-family"
-  network_mode             = "awsvpc"  # Changed to 'awsvpc' for ALB compatibility
-  requires_compatibilities = ["FARGATE"]  # Changed to 'FARGATE' to use AWS Free Tier
+  network_mode             = "awsvpc"  
+  requires_compatibilities = ["FARGATE"]  
   cpu                      = "256"
   memory                   = "512"
   execution_role_arn       = aws_iam_role.ecs_execution_role.arn
@@ -1181,7 +1181,7 @@ resource "aws_ecs_service" "app_service" {
   name            = "app-service"
   cluster         = aws_ecs_cluster.lanchonetedarua_cluster.id
   task_definition = aws_ecs_task_definition.app_task.arn
-  launch_type     = "FARGATE"  # Changed to 'FARGATE' for AWS Free Tier
+  launch_type     = "FARGATE"  
   desired_count   = 1
   network_configuration {
     subnets = [aws_subnet.example.id]
