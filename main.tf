@@ -344,7 +344,7 @@ EOF
 
 resource "aws_lambda_permission" "allow_generate_token" {
     statement_id  = "AllowMyroleAuthentication"
-    action        = "lambda:InvokeFunction"
+    action        = "lambda:InvokeFunctionUrl"
     function_name = "lanchonete_generate_token"
     principal     = "events.amazonaws.com"
     source_arn    = "arn:aws:iam::990304834518:role/authentication"
