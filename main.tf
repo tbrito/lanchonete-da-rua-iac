@@ -378,19 +378,20 @@ resource "null_resource" "install_python_dependencies" {
   }
 }
 
-data "archive_file" "zip_the_python_code" {
-  depends_on  = ["null_resource.install_python_dependencies"]
-  type        = "zip"
-  source_dir  = "${path.module}/generate_token/"
-  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
-}
+# data "archive_file" "zip_the_python_code" {
+#  depends_on  = ["null_resource.install_python_dependencies"]
+#  type        = "zip"
+#  source_dir  = "${path.module}/generate_token/"
+#  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
+# }
 
 resource "aws_lambda_function" "generate_token_function" {
-  filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
+ # filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
   function_name                  = "lanchonete_generate_token"
   role                           = aws_iam_role.lambda_role.arn
-  handler                        = "lambda_function.lambda_handler"
-  runtime                        = "python3.9"
-  publish                        = false
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+ # handler                        = "lambda_function.lambda_handler"
+ # runtime                        = "python3.9"
+ # publish                        = false
+ depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+ 
 }
