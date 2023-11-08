@@ -411,7 +411,6 @@ resource "null_resource" "install_python_dependencies" {
   type        = "zip"
   source_dir  = "${path.module}/check_token/"
   output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
-  source_files = ["${path.module}/check_token/*", "${path.module}/check_token/requirements.txt"]
  }
 
   resource "aws_lambda_function" "check_token_function" {
