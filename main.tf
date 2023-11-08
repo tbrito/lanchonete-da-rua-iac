@@ -554,7 +554,7 @@ resource "aws_api_gateway_rest_api" "lanchonetedarua" {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/item-pedido"
+                "$ref": "#/components/schemas/itemPedido"
               }
             }
           },
@@ -597,7 +597,7 @@ resource "aws_api_gateway_rest_api" "lanchonetedarua" {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/item-pedido"
+                "$ref": "#/components/schemas/itemPedido"
               }
             }
           },
@@ -878,7 +878,7 @@ resource "aws_api_gateway_rest_api" "lanchonetedarua" {
           }
         }
       },
-      "item-pedido": {
+      "itemPedido": {
         "required": [
           "pedido_id",
           "produto_id",
