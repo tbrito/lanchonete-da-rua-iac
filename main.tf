@@ -298,3 +298,93 @@ resource "aws_cloudwatch_log_group" "ecs_log_group" {
 output "ecs_cluster_name" {
   value = aws_ecs_cluster.lanchonetedarua_cluster.name
 }
+
+### Lambda ###
+resource "aws_iam_role" "lambda_role" {
+name   = "iamRoleLambdaFunctionRole"
+assume_role_policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Action": "sts:AssumeRole",
+     "Principal": {
+       "Service": "lambda.amazonaws.com"
+     },
+     "Effect": "Allow",
+     "Sid": ""
+   }
+ ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "iam_policy_for_lambda" {
+ name         = "aws_iam_policy_for_terraform_aws_lambda_role"
+ path         = "/"
+ description  = "AWS IAM Gerenciamento da politica das lambdas"
+ policy = <<EOF
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Action": [
+       "logs:CreateLogGroup",
+       "logs:CreateLogStream",
+       "logs:PutLogEvents",
+       "lambda:*"
+     ],
+     "Resource": "arn:aws:logs:*:*:*",
+     "Effect": "Allow"
+   }
+ ]
+}
+EOF
+}
+
+resource "aws_lambda_permission" "allow_generate_token" {
+   statement_id  = "AllowMyroleAuthentication"
+   action        = "lambda:InvokeFunction"
+   function_name = "lanchonete_generate_token"
+   principal     = "events.amazonaws.com"
+   source_arn    = "arn:aws:iam::990304834518:role/authentication"
+   source_account         = "990304834518"
+   function_url_auth_type = "AWS_IAM"
+}
+
+## Anexar política do IAM à função do IAM
+resource "aws_iam_role_policy_attachment" "attach_iam_policy_to_iam_role" {
+ role        = aws_iam_role.lambda_role.name
+ policy_arn  = aws_iam_policy.iam_policy_for_lambda.arn
+}
+
+resource "null_resource" "install_python_dependencies" {
+  provisioner "local-exec" {
+    command = "bash ${path.module}/scripts/create_pkg.sh"
+
+    environment = {
+      source_code_path = "generate_token"
+      function_name    = "lanchonete_generate_token"
+      path_module      = path.module
+      runtime          = "python3.8"
+      path_cwd         = path.cwd
+    }
+  }
+}
+
+# data "archive_file" "zip_the_python_code" {
+#  depends_on  = ["null_resource.install_python_dependencies"]
+#  type        = "zip"
+#  source_dir  = "${path.module}/generate_token/"
+#  output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
+# }
+
+resource "aws_lambda_function" "generate_token_function" {
+ # filename                       = "${path.module}/lambda_dist_pkg/generate-token.zip"
+  function_name                  = "lanchonete_generate_token"
+  role                           = aws_iam_role.lambda_role.arn
+ # handler                        = "lambda_function.lambda_handler"
+ # runtime                        = "python3.9"
+ # publish                        = false
+ depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+}
