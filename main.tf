@@ -385,5 +385,5 @@ resource "null_resource" "install_python_dependencies" {
   role                           = aws_iam_role.lambda_role.arn
   handler                        = "lambda_function.lambda_handler"
   runtime                        = "python3.9"
-  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies]
+  depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role, null_resource.install_python_dependencies, aws_lambda_permission.allow_generate_token]
  }
