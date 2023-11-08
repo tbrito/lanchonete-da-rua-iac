@@ -375,11 +375,10 @@ resource "null_resource" "install_python_dependencies" {
 # LAMBDA GENERATE TOKEN
 
  data "archive_file" "zip_the_python_code" {
-  depends_on  = ["null_resource.install_python_dependencies"]
+  depends_on  = [null_resource.install_python_dependencies]
   type        = "zip"
   source_dir  = "${path.module}/generate_token/"
   output_path = "${path.module}/lambda_dist_pkg/generate-token.zip"
-  source_files = ["${path.module}/generate_token/*", "${path.module}/generate_token/requirements.txt"]
  }
 
  resource "aws_lambda_function" "generate_token_function" {
@@ -407,7 +406,7 @@ resource "null_resource" "install_python_dependencies" {
 }
 
  data "archive_file" "zip_the_python_code_2" {
-  depends_on  = ["null_resource.create_package"]
+  depends_on  = [null_resource.create_package]
   type        = "zip"
   source_dir  = "${path.module}/check_token/"
   output_path = "${path.module}/lambda_dist_pkg/check_token.zip"
