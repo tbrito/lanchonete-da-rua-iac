@@ -17,12 +17,8 @@ if [ -f "$FILE" ]; then
   echo "Installing dependencies..."
   echo "From: requirement.txt file exists..."
   pip install -r "$FILE" -t ./$function_name
-
-  # Create deployment package...
-  echo "Creating deployment package..."
-  cd env_$function_name/lib/$runtime/site-packages/
-  cp -r . $path_cwd/$dir_name
-  cp -r $path_cwd/$function_name/ $path_cwd/$dir_name
+  cd ./$function_name
+  zip -r $function_name.zip .
 
 else
   echo "Error: requirement.txt does not exist!"
