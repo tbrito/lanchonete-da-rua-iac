@@ -201,6 +201,31 @@ resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
   name = "lanchonetedarua-cluster"
 }
 
+# SSM
+resource "aws_ssm_parameter" "postgres_user" {
+  name  = "/app/postgres/user"
+  type  = "String"
+  value = "postgres"
+}
+
+resource "aws_ssm_parameter" "postgres_password" {
+  name  = "/app/postgres/password"
+  type  = "String"
+  value = "dblanchonetederuapass"
+}
+
+resource "aws_ssm_parameter" "postgres_db" {
+  name  = "/app/postgres/database"
+  type  = "String"
+  value = "lanchonetedarua"
+}
+
+resource "aws_ssm_parameter" "postgres_uri" {
+  name  = "/app/postgres/URI"
+  type  = "String"
+  value = "postgresql://postgres:dblanchonetederuapass@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
+}
+
 # ECS Task Definition
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "app-task-family"
@@ -220,22 +245,22 @@ resource "aws_ecs_task_definition" "app_task" {
         hostPort      = 5000
       },
     ],
-    environment = [
+    secrets = [
       {
         name  = "POSTGRES_USER",
-        value = "postgres"
+        valueFrom = aws_ssm_parameter.postgres_user.arn
       },
       {
         name  = "POSTGRES_PASSWORD",
-        value = "dblanchonetederuapass"
+        valueFrom = aws_ssm_parameter.postgres_password.arn
       },
       {
         name  = "POSTGRES_DB",
-        value = "lanchonetedarua"
+        valueFrom = aws_ssm_parameter.postgres_db.arn
       },
       {
         name  = "DATABASE_URI",
-        value = "postgresql://postgres:dblanchonetederuapass@lanchonetedarua3.co2eflozi4t9.us-east-1.rds.amazonaws.com/postgres"
+        valueFrom = aws_ssm_parameter.postgres_uri.arn
       }
     ],
   }])
