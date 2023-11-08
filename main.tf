@@ -1126,113 +1126,73 @@ resource "aws_ssm_parameter" "postgres_uri" {
 }
 
 # ECS Task Definition
+resource "aws_ecs_cluster" "lanchonetedarua_cluster" {
+  name = "lanchonetedarua-cluster"
+}
+
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "app-task-family"
-  network_mode             = "bridge"
-  requires_compatibilities = ["EC2"]
+  network_mode             = "awsvpc"  
+  requires_compatibilities = ["FARGATE"]  
   cpu                      = "256"
   memory                   = "512"
+  execution_role_arn       = aws_iam_role.ecs_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([{
     name  = "lanchonetedarua",
     image = "public.ecr.aws/p2v2q2d1/lanchonete-de-rua:latest",
     cpu   = 256,
     memory = 512,
-    ports = [
+    portMappings = [
       {
-        containerPort = 5000,
-        hostPort      = 5000
+        containerPort = 5000
       },
     ],
     secrets = [
       {
-        name  = "POSTGRES_USER",
+        name      = "POSTGRES_USER",
         valueFrom = aws_ssm_parameter.postgres_user.arn
       },
       {
-        name  = "POSTGRES_PASSWORD",
+        name      = "POSTGRES_PASSWORD",
         valueFrom = aws_ssm_parameter.postgres_password.arn
       },
       {
-        name  = "POSTGRES_DB",
+        name      = "POSTGRES_DB",
         valueFrom = aws_ssm_parameter.postgres_db.arn
       },
       {
-        name  = "DATABASE_URI",
+        name      = "DATABASE_URI",
         valueFrom = aws_ssm_parameter.postgres_uri.arn
       }
     ],
+    healthCheck = {
+      command = ["CMD-SHELL", "curl -f http://localhost:5000/ || exit 1"]
+      interval = 30
+      timeout = 5
+      retries = 3
+      startPeriod = 60
+    },
   }])
 }
 
-
-# ECS Service
 resource "aws_ecs_service" "app_service" {
   name            = "app-service"
   cluster         = aws_ecs_cluster.lanchonetedarua_cluster.id
   task_definition = aws_ecs_task_definition.app_task.arn
-  launch_type     = "EC2"
+  launch_type     = "FARGATE"  
   desired_count   = 1
-}
-
-# IAM Role for ECS Instance
-resource "aws_iam_role" "ecs_instance_role" {
-  name = "ecs-instance-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        },
-      },
-    ],
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "ecs_role_policy_attachment" {
-  role       = aws_iam_role.ecs_instance_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
-}
-
-# IAM Instance Profile for ECS
-resource "aws_iam_instance_profile" "ecs_instance_profile" {
-  name = "ecs-instance-profile"
-  role = aws_iam_role.ecs_instance_role.name
-}
-
-# ECS Optimized AMI
-data "aws_ami" "ecs_optimized" {
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+  network_configuration {
+    subnets = [aws_subnet.example.id]
+    security_groups = [aws_security_group.example.id]
   }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.example.arn
+    container_name   = "lanchonetedarua"
+    container_port   = 5000
   }
-  owners = ["amazon"] # Amazon ECS AMI owner ID
-}
-
-# EC2 Instance for ECS Cluster
-resource "aws_instance" "ecs_host" {
-  ami           = data.aws_ami.ecs_optimized.id
-  instance_type = "t2.micro"
-  iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
-
-  user_data = <<-EOF
-              #!/bin/bash
-              echo ECS_CLUSTER=${aws_ecs_cluster.lanchonetedarua_cluster.name} >> /etc/ecs/ecs.config
-              EOF
-}
-
-# CloudWatch Log Group for ECS
-resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name = "/ecs/lanchonetedarua-cluster"
 }
 
 # Output the ECS Cluster Name
