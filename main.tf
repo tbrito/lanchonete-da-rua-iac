@@ -394,7 +394,7 @@ resource "null_resource" "install_python_dependencies" {
 
  resource "null_resource" "create_package" {
   provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/create_pkg.sh"
+    command = "bash ${path.module}/scripts/create_pkg2.sh"
     environment = {
       source_code_path = "check_token"
       function_name    = "check_token"
