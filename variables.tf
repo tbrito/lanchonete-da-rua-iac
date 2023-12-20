@@ -1,7 +1,7 @@
 variable "ecr_name" {
   description = "The name of the ECR registry"
   type        = any
-  default     = null
+  default     = "lanchonetedarua"
 }
 
 variable "image_mutability" {
@@ -20,5 +20,7 @@ variable "encrypt_type" {
 variable "tags" {
   description = "The key-value maps for tagging"
   type        = map(string)
-  default     = {}
+  default     = {
+    "Environment" = "Dev"
+  }
 }
