@@ -20,7 +20,5 @@ variable "encrypt_type" {
 variable "tags" {
   description = "The key-value maps for tagging"
   type        = map(string)
-  default     = {
-    "Environment" = "Dev"
-  }
+  default     = {}
 }
