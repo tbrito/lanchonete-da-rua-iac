@@ -11,7 +11,7 @@ terraform {
     organization = "grupo23postech"
 
     workspaces {
-      name = "iac-lanchonetedarua-database"
+      name = "lanchonete-da-rua-iac"
     }
   }
 }
