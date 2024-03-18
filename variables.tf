@@ -22,3 +22,11 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "client_key" {
+  description = "AKIAU6GD3QJR2EMRVYOR"
+}
+
+variable "client_secret" {
+  description = "0ZvpUMYON2ldsmnG3TdPn9x6TwByhV6QbohmFq+n"
+}
